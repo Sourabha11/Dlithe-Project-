@@ -29,7 +29,7 @@
 %>
 <body>
 	<div class="container">
-		<h2>Sign In Form</h2>
+		<h2>Login In Form</h2>
 	    <form method="post" action="loginHandler.jsp">
 	      <div class="form-group">
 	        <label for="username">Username:</label>

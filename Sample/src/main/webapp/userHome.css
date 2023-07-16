@@ -1,21 +1,42 @@
 @charset "ISO-8859-1";
-.icons {
-  display: flex;
-  justify-content: center;
-  margin-top: 20px;
-   padding-left: 20px;
-    background-image: url("https://source.unsplash.com/random");
-  background-size: auto;
+*{
+	padding : 0;
+	margin : 10px;
+	list-style-type:none;
+	text-decoration:none; 
+	background-color:#f1f5f9;
 }
 
-.icons i {
-  font-size: 100%;
-  color: #333;
-  cursor: pointer;
-  padding: 80px;
+body h1{
+	text-align:center;
 }
-
-.icons i:hover {
-  color: #000;
-  padding: 50px;
+.mainContent{
+	margin-top:25px; 
+	margin-left:100px;
+	margin-right:100px;
+	display:flex;
+	justify-content:space-between;
+	padding:2rem 1.5rem;
+	min-height:calc(100vh-90px);
+	box-shadow:2px 2px 10px rgba(0,0,0,0.7);
+	background-color:white;
+	
+}
+a{
+	background-color:white;
+	box-shadow:2px 2px 10px rgba(0,0,0,0.2);
+	margin-left:30px;
+	margin-right:30px
+}
+.icons{
+	margin:30px;
+	background-color:white;
+}
+.icons i{
+	color:black;
+	background-color:white;
+}
+.icons span{
+	color:black;
+	padding-left:10px;
 }
