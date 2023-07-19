@@ -1,48 +1,98 @@
-<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
-    pageEncoding="ISO-8859-1"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+    <%@page import="java.sql.*" %>
 
-<!DOCTYPE html>
 <html>
 <head>
-<title>EMI Plans</title>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+<title>EMI Calculation</title>
 </head>
 <body>
-<h1>EMI Plans</h1>
 
-<h2>Choose your EMI plan</h2>
-<input type="range" min="10000" max="100000" step="1000" value="10000" id="emi-slider" class="round">
-<p>Loan amount: <span id="emi-amount"></span></p>
+<h1>EMI Calculation</h1>
 
-<script>
-var slider = document.getElementById("emi-slider");
-var amount = document.getElementById("emi-amount");
+<form action="emi.jsp" method="post">
 
-slider.oninput = function() {
-  amount.innerHTML = slider.value;
-};
+<label for="principal">Principal Amount:</label>
+<input type="text" name="principal" id="principal" />
 
-function getEMIPlan(loanAmount) {
-  // Connect to the MySQL database
-  var connection = new XMLHttpRequest();
-  connection.open("GET", "/emiplans.jsp?loanAmount=" + loanAmount, true);
-  connection.onload = function() {
-    if (connection.status === 200) {
-      // The request was successful
-      var response = connection.responseText;
-      document.getElementById("emi-plan").innerHTML = response;
+<label for="interest">Interest Rate:</label>
+<input type="text" name="interest" id="interest" />
+
+<label for="tenure">Tenure (in months):</label>
+<input type="text" name="tenure" id="tenure" />
+
+<input type="submit" value="Calculate EMI" />
+
+</form>
+
+<hr />
+
+<%
+Object rs;
+ResultSet rs3;
+if (request.getParameter("LoansAmount") != null &&
+request.getParameter("Interest") != null &&
+request.getParameter("Tenure") != null) {
+
+double LoansAmount = Double.parseDouble(request.getParameter("LoansAmount"));
+double Interest = Double.parseDouble(request.getParameter("Interest"));
+int Tenure = Integer.parseInt(request.getParameter("Tenure"));
+
+double emi = LoansAmount * (Interest / 1200.0) * (1 + Interest / 1200.0)
+* Tenure / (1 - Math.pow(1 + Interest / 1200.0, -12 * Tenure));
+
+
+out.println("EMI = " + emi);
+
+// Connect to the MySQL database.
+String url = "jdbc:mysql://localhost:3306/banking";
+String username = "root";
+String password = "123456";
+
+Connection connection = null;
+try {
+	Class.forName("com.mysql.cj.jdbc.Driver");
+	Connection con = DriverManager.getConnection(url, username, password);
+    // Create a statement.
+    Statement statement = connection.createStatement();
+
+    // Select the EMI data from the `loans` table.
+    String sql = "SELECT LoansAmount, tenure, interest FROM banking.loans WHERE userid=1";
+    PreparedStatement preparedStatement = connection.prepareStatement(sql);
+    preparedStatement.setDouble(1, LoansAmount);
+    ResultSet e3 = preparedStatement.executeQuery();
+
+    // If the EMI data is found, then display it.
+    if (e3 != null) {
+        // Get the tenure and interest from the database.
+        int dbTenure = e3.getInt("tenure");
+        double dbInterest = e3.getDouble("interest");
+
+        // Calculate the total amount.
+        double totalAmount = emi * dbTenure;
+
+        // Display the total amount.
+        out.println("Total Amount = " + totalAmount);
+
+        // Close the ResultSet object.
+        e3.close();
     } else {
-      // The request failed
-      document.getElementById("emi-plan").innerHTML = "Failed to get EMI plan";
+        out.println("No EMI data found in the database");
     }
-  };
-  connection.send();
-}
-</script>
 
-<p id="emi-plan"></p>
+} catch (SQLException e) {
+    e.printStackTrace();
+} finally {
+    if (connection != null) {
+        try {
+            connection.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+}
+}
+%>
 
 </body>
 </html>

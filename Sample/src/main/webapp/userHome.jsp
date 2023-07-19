@@ -33,7 +33,7 @@
 	</div>
 	</a>
 	
-	<a href="credit.jsp">
+	<a href="creditscore.jsp">
 	<div class="icons">
   	<h3><i class="fas fa-credit-card fa-5x"></i></h3>
   	<span>Credit Score</span>
